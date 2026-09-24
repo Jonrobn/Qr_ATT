@@ -47,7 +47,18 @@ const styles = StyleSheet.create({
   headerContainer: { flex: 1, justifyContent: 'center', paddingHorizontal: 24 },
   byLine: { fontSize: 13, color: COLORS.textSecondary, marginTop: 8, textAlign: 'center' },
   bodyContainer: { paddingHorizontal: 24, marginBottom: 16 },
-  mainTitle: { fontSize: 22, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 6 },
-  subtitle: { fontSize: 15, color: COLORS.textSecondary, lineHeight: 21 },
+  mainTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: COLORS.textPrimary,
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 15,
+    color: COLORS.textSecondary,
+    lineHeight: 21,
+    textAlign: 'center',
+  },
   footerContainer: { flex: 1 / 3, paddingHorizontal: 24, width: '100%' },
 });
