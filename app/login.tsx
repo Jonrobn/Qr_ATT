@@ -145,19 +145,19 @@ const styles = StyleSheet.create({
 
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: 20,
     paddingBottom: 40,
   },
 
   headerContainer: {
     alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 16,
+    marginTop: 12,
+    marginBottom: 12,
   },
 
   title: {
-    fontSize: 28,
-    fontWeight: '700',
+    fontSize: 30,
+    fontWeight: '800',
     color: COLORS.textPrimary,
     marginBottom: 4,
     textAlign: 'center',
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: COLORS.textSecondary,
     lineHeight: 21,
-    marginBottom: 32,
+    marginBottom: 26,
     textAlign: 'center',
   },
 
@@ -180,20 +180,21 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 12,
+    fontWeight: '800',
     color: COLORS.textPrimary,
     marginBottom: 6,
-    marginTop: 10,
+    marginTop: 14,
+    letterSpacing: 0.5,
   },
 
   input: {
     backgroundColor: COLORS.card,
-    borderRadius: 10,
-    borderWidth: 1,
+    borderRadius: 8,
+    borderWidth: 2,
     borderColor: COLORS.border,
     paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingVertical: 14,
     fontSize: 16,
     color: COLORS.textPrimary,
   },
@@ -213,6 +214,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.primary,
     textAlign: 'center',
-    fontWeight: '600',
+    fontWeight: '700',
   },
 });

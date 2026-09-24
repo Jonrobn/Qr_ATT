@@ -215,10 +215,14 @@ export default function TeacherScreen() {
         {QUICK_END_OPTIONS.map((option) => (
           <Pressable
             key={option.label}
-            style={styles.chip}
+            style={({ pressed }) => [styles.chip, pressed && styles.chipPressed]}
             onPress={() => handleQuickEnd(option.ms)}
           >
-            <Text style={styles.chipText}>{option.label}</Text>
+            {({ pressed }) => (
+              <Text style={[styles.chipText, pressed && styles.chipTextPressed]}>
+                {option.label}
+              </Text>
+            )}
           </Pressable>
         ))}
       </View>
@@ -284,8 +288,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   content: {
-    paddingHorizontal: 24,
-    paddingTop: 24,
+    paddingHorizontal: 20,
+    paddingTop: 22,
     paddingBottom: 40,
   },
   center: {
@@ -296,8 +300,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   lockTitle: {
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: 22,
+    fontWeight: '800',
     color: COLORS.textPrimary,
     marginTop: 12,
     marginBottom: 4,
@@ -308,8 +312,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   title: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 26,
+    fontWeight: '800',
     color: COLORS.textPrimary,
     marginBottom: 4,
   },
@@ -320,26 +324,27 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 12,
+    fontWeight: '800',
     color: COLORS.textPrimary,
     marginBottom: 6,
-    marginTop: 10,
+    marginTop: 14,
+    letterSpacing: 0.5,
   },
   input: {
     backgroundColor: COLORS.card,
-    borderRadius: 10,
-    borderWidth: 1,
+    borderRadius: 8,
+    borderWidth: 2,
     borderColor: COLORS.border,
     paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingVertical: 14,
     fontSize: 16,
     color: COLORS.textPrimary,
   },
   pickerField: {
     backgroundColor: COLORS.card,
-    borderRadius: 10,
-    borderWidth: 1,
+    borderRadius: 8,
+    borderWidth: 2,
     borderColor: COLORS.border,
     paddingHorizontal: 14,
     paddingVertical: 14,
@@ -362,15 +367,25 @@ const styles = StyleSheet.create({
   },
   chip: {
     backgroundColor: COLORS.surface,
-    borderRadius: 999,
+    borderRadius: 7,
+    borderWidth: 1,
+    borderColor: COLORS.accent,
     paddingHorizontal: 14,
     paddingVertical: 7,
     marginRight: 8,
   },
+  chipPressed: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+    transform: [{ translateY: 1 }],
+  },
   chipText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS.primary,
+  },
+  chipTextPressed: {
+    color: COLORS.textOnPrimary,
   },
   hint: {
     fontSize: 12,
@@ -389,16 +404,21 @@ const styles = StyleSheet.create({
   },
   resultCard: {
     backgroundColor: COLORS.card,
-    borderRadius: 14,
-    padding: 16,
+    borderRadius: 11,
+    padding: 18,
     marginTop: 20,
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: COLORS.border,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.16,
+    shadowRadius: 0,
+    elevation: 4,
   },
   resultTitle: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS.textPrimary,
     textAlign: 'center',
     marginBottom: 12,
@@ -406,7 +426,9 @@ const styles = StyleSheet.create({
   qrBox: {
     backgroundColor: '#FFFFFF',
     padding: 12,
-    borderRadius: 10,
+    borderRadius: 7,
+    borderWidth: 2,
+    borderColor: COLORS.border,
     marginBottom: 12,
   },
   payloadText: {

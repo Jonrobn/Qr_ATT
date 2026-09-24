@@ -43,22 +43,22 @@ export default function Index() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background, },
-  headerContainer: { flex: 1, justifyContent: 'center', paddingHorizontal: 24 },
-  byLine: { fontSize: 13, color: COLORS.textSecondary, marginTop: 8, textAlign: 'center' },
-  bodyContainer: { paddingHorizontal: 24, marginBottom: 16 },
+  container: { flex: 1, backgroundColor: COLORS.background },
+  headerContainer: { flex: 0.92, justifyContent: 'center', paddingHorizontal: 24 },
+  byLine: { fontSize: 12, color: COLORS.textSecondary, marginTop: 8, textAlign: 'center', fontWeight: '700', letterSpacing: 0.3 },
+  bodyContainer: { marginHorizontal: 20, marginBottom: 18, padding: 18, backgroundColor: COLORS.card, borderWidth: 2, borderColor: COLORS.border, borderRadius: 11, shadowColor: COLORS.shadow, shadowOffset: { width: 4, height: 4 }, shadowOpacity: 0.14, shadowRadius: 0, elevation: 4 },
   mainTitle: {
-    fontSize: 22,
-    fontWeight: '700',
+    fontSize: 25,
+    fontWeight: '800',
     color: COLORS.textPrimary,
     marginBottom: 6,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   subtitle: {
     fontSize: 15,
     color: COLORS.textSecondary,
     lineHeight: 21,
-    textAlign: 'center',
+    textAlign: 'left',
   },
-  footerContainer: { flex: 1 / 3, paddingHorizontal: 24, width: '100%' },
+  footerContainer: { flex: 0, paddingHorizontal: 24, width: '100%', paddingTop: 4, paddingBottom: 8 },
 });

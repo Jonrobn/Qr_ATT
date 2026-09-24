@@ -62,11 +62,16 @@ export default function AppButton({ title, icon, theme, onPress, disabled }: Pro
 const styles = StyleSheet.create({
   buttonOuter: {
     width: '100%',
-    marginBottom: 14,
+    marginBottom: 16,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 3, height: 3 },
+    shadowOpacity: 0.16,
+    shadowRadius: 0,
+    elevation: 3,
   },
   buttonInner: {
-    borderRadius: 10,
-    paddingVertical: 16,
+    borderRadius: 9,
+    paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: 'center',
     justifyContent: 'center',
@@ -74,18 +79,18 @@ const styles = StyleSheet.create({
   },
   primaryFill: {
     backgroundColor: COLORS.primary,
-    borderWidth: 1,
-    borderColor: COLORS.primary,
+    borderWidth: 2,
+    borderColor: COLORS.border,
   },
   secondaryFill: {
     backgroundColor: COLORS.card,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: COLORS.border,
   },
   disabled: {
     opacity: 0.6,
   },
   icon: { paddingRight: 10 },
-  label: { fontSize: 17, fontWeight: '600', color: COLORS.textPrimary },
-  labelPrimary: { color: COLORS.textOnPrimary, fontWeight: '700' },
+  label: { fontSize: 16, fontWeight: '700', color: COLORS.textPrimary },
+  labelPrimary: { color: COLORS.textOnPrimary, fontWeight: '800' },
 });
