@@ -23,6 +23,7 @@ import { signUp } from '@/lib/auth';
 export default function RegisterScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -53,10 +54,14 @@ export default function RegisterScreen() {
     setLoading(true);
 
     try {
-      const { data, error: authError } = await signUp(email.trim(), password, {
-        full_name: fullName.trim(),
-        role,
-      });
+      const { data, error: authError } = await signUp(
+        email.trim(),
+        password,
+        {
+          full_name: fullName.trim(),
+          role,
+        }
+      );
 
       if (authError) {
         setError(authError.message);
@@ -89,16 +94,25 @@ export default function RegisterScreen() {
               <Header title="QR Attendance" />
             </View>
 
-            <Text style={styles.title}>Create Account</Text>
-            <Text style={styles.subtitle}>Register to start recording attendance</Text>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>Create Account</Text>
+
+              <Text style={styles.subtitle}>
+                Register to start recording attendance
+              </Text>
+            </View>
 
             {success ? (
               <View style={styles.successContainer}>
-                <Text style={styles.successTitle}>Check your email!</Text>
-                <Text style={styles.successText}>
-                  We sent a confirmation link to {email}. Click the link to verify your
-                  account, then come back and sign in.
+                <Text style={styles.successTitle}>
+                  Check your email!
                 </Text>
+
+                <Text style={styles.successText}>
+                  We sent a confirmation link to {email}. Click the link to
+                  verify your account, then come back and sign in.
+                </Text>
+
                 <Link href="/login" style={styles.link}>
                   Back to Sign In
                 </Link>
@@ -106,6 +120,7 @@ export default function RegisterScreen() {
             ) : (
               <View style={styles.form}>
                 <Text style={styles.label}>Full Name</Text>
+
                 <TextInput
                   style={styles.input}
                   value={fullName}
@@ -116,9 +131,13 @@ export default function RegisterScreen() {
                 />
 
                 <Text style={styles.label}>I am a...</Text>
+
                 <View style={styles.roleRow}>
                   <Pressable
-                    style={[styles.roleChip, role === 'student' && styles.roleChipActive]}
+                    style={[
+                      styles.roleChip,
+                      role === 'student' && styles.roleChipActive,
+                    ]}
                     onPress={() => setRole('student')}
                   >
                     <Text
@@ -130,8 +149,12 @@ export default function RegisterScreen() {
                       Student
                     </Text>
                   </Pressable>
+
                   <Pressable
-                    style={[styles.roleChip, role === 'teacher' && styles.roleChipActive]}
+                    style={[
+                      styles.roleChip,
+                      role === 'teacher' && styles.roleChipActive,
+                    ]}
                     onPress={() => setRole('teacher')}
                   >
                     <Text
@@ -146,6 +169,7 @@ export default function RegisterScreen() {
                 </View>
 
                 <Text style={styles.label}>Email</Text>
+
                 <TextInput
                   style={styles.input}
                   value={email}
@@ -158,6 +182,7 @@ export default function RegisterScreen() {
                 />
 
                 <Text style={styles.label}>Password</Text>
+
                 <TextInput
                   style={styles.input}
                   value={password}
@@ -169,6 +194,7 @@ export default function RegisterScreen() {
                 />
 
                 <Text style={styles.label}>Confirm Password</Text>
+
                 <TextInput
                   style={styles.input}
                   value={confirmPassword}
@@ -179,17 +205,27 @@ export default function RegisterScreen() {
                   editable={!loading}
                 />
 
-                {error && <Text style={styles.error}>{error}</Text>}
+                {error && (
+                  <Text style={styles.error}>
+                    {error}
+                  </Text>
+                )}
 
                 {loading ? (
-                  <ActivityIndicator size="large" color={COLORS.primary} style={styles.loader} />
-                ) : (
-                  <AppButton
-                    theme="primary"
-                    title="Sign Up"
-                    icon="person-add-outline"
-                    onPress={handleRegister}
+                  <ActivityIndicator
+                    size="large"
+                    color={COLORS.primary}
+                    style={styles.loader}
                   />
+                ) : (
+                  <View style={styles.buttonContainer}>
+                    <AppButton
+                      theme="primary"
+                      title="Sign Up"
+                      icon="person-add-outline"
+                      onPress={handleRegister}
+                    />
+                  </View>
                 )}
               </View>
             )}
@@ -211,34 +247,52 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+
   keyboardView: {
     flex: 1,
   },
+
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 24,
     paddingBottom: 40,
   },
+
   headerContainer: {
     alignItems: 'center',
     marginTop: 20,
     marginBottom: 16,
   },
+
+  titleContainer: {
+    alignItems: 'center',
+    width: '100%',
+  },
+
   title: {
     fontSize: 28,
     fontWeight: '700',
     color: COLORS.textPrimary,
     marginBottom: 4,
+    textAlign: 'center',
   },
+
   subtitle: {
     fontSize: 15,
     color: COLORS.textSecondary,
     lineHeight: 21,
     marginBottom: 32,
+    textAlign: 'center',
   },
+
   form: {
     marginBottom: 24,
   },
+
+  buttonContainer: {
+    marginTop: 16,
+  },
+
   label: {
     fontSize: 14,
     fontWeight: '600',
@@ -246,6 +300,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     marginTop: 10,
   },
+
   input: {
     backgroundColor: COLORS.card,
     borderRadius: 10,
@@ -256,11 +311,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.textPrimary,
   },
+
   roleRow: {
     flexDirection: 'row',
     gap: 10,
     marginBottom: 4,
   },
+
   roleChip: {
     flex: 1,
     backgroundColor: COLORS.card,
@@ -270,34 +327,41 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: 'center',
   },
+
   roleChipActive: {
     borderColor: COLORS.primary,
     backgroundColor: COLORS.primary + '14',
   },
+
   roleChipText: {
     fontSize: 14,
     fontWeight: '600',
     color: COLORS.textSecondary,
   },
+
   roleChipTextActive: {
     color: COLORS.primary,
     fontWeight: '700',
   },
+
   error: {
     fontSize: 14,
     color: COLORS.danger,
     marginTop: 12,
     marginBottom: 4,
   },
+
   loader: {
     marginVertical: 16,
   },
+
   link: {
     fontSize: 14,
     color: COLORS.primary,
     textAlign: 'center',
     fontWeight: '600',
   },
+
   successContainer: {
     alignItems: 'center',
     marginBottom: 24,
@@ -305,12 +369,14 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.card,
     borderRadius: 14,
   },
+
   successTitle: {
     fontSize: 18,
     fontWeight: '700',
     color: COLORS.textPrimary,
     marginBottom: 8,
   },
+
   successText: {
     fontSize: 14,
     color: COLORS.textSecondary,

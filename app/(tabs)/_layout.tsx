@@ -27,6 +27,7 @@ export default function TabLayout() {
           ),
         }}
       />
+      
       <Tabs.Screen
         name="scan"
         options={{
@@ -40,6 +41,7 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="history"
         options={{
@@ -53,6 +55,7 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="profile"
         options={{
@@ -66,6 +69,7 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="teacher"
         options={{

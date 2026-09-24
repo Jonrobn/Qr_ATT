@@ -22,6 +22,7 @@ import { signIn } from '@/lib/auth';
 export default function LoginScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +33,10 @@ export default function LoginScreen() {
     setLoading(true);
 
     try {
-      const { data, error: authError } = await signIn(email.trim(), password);
+      const { data, error: authError } = await signIn(
+        email.trim(),
+        password
+      );
 
       if (authError) {
         setError(authError.message);
@@ -64,10 +68,14 @@ export default function LoginScreen() {
             </View>
 
             <Text style={styles.title}>Welcome Back</Text>
-            <Text style={styles.subtitle}>Sign in to record your attendance</Text>
+
+            <Text style={styles.subtitle}>
+              Sign in to record your attendance
+            </Text>
 
             <View style={styles.form}>
               <Text style={styles.label}>Email</Text>
+
               <TextInput
                 style={styles.input}
                 value={email}
@@ -80,6 +88,7 @@ export default function LoginScreen() {
               />
 
               <Text style={styles.label}>Password</Text>
+
               <TextInput
                 style={styles.input}
                 value={password}
@@ -90,17 +99,27 @@ export default function LoginScreen() {
                 editable={!loading}
               />
 
-              {error && <Text style={styles.error}>{error}</Text>}
+              {error && (
+                <Text style={styles.error}>
+                  {error}
+                </Text>
+              )}
 
               {loading ? (
-                <ActivityIndicator size="large" color={COLORS.primary} style={styles.loader} />
-              ) : (
-                <AppButton
-                  theme="primary"
-                  title="Sign In"
-                  icon="log-in-outline"
-                  onPress={handleLogin}
+                <ActivityIndicator
+                  size="large"
+                  color={COLORS.primary}
+                  style={styles.loader}
                 />
+              ) : (
+                <View style={styles.buttonContainer}>
+                  <AppButton
+                    theme="primary"
+                    title="Sign In"
+                    icon="log-in-outline"
+                    onPress={handleLogin}
+                  />
+                </View>
               )}
             </View>
 
@@ -119,34 +138,47 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+
   keyboardView: {
     flex: 1,
   },
+
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 24,
     paddingBottom: 40,
   },
+
   headerContainer: {
     alignItems: 'center',
     marginTop: 20,
     marginBottom: 16,
   },
+
   title: {
     fontSize: 28,
     fontWeight: '700',
     color: COLORS.textPrimary,
     marginBottom: 4,
+    textAlign: 'center',
   },
+
   subtitle: {
     fontSize: 15,
     color: COLORS.textSecondary,
     lineHeight: 21,
     marginBottom: 32,
+    textAlign: 'center',
   },
+
   form: {
     marginBottom: 24,
   },
+
+  buttonContainer: {
+    marginTop: 16,
+  },
+
   label: {
     fontSize: 14,
     fontWeight: '600',
@@ -154,6 +186,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     marginTop: 10,
   },
+
   input: {
     backgroundColor: COLORS.card,
     borderRadius: 10,
@@ -164,15 +197,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.textPrimary,
   },
+
   error: {
     fontSize: 14,
     color: COLORS.danger,
     marginTop: 12,
     marginBottom: 4,
   },
+
   loader: {
     marginVertical: 16,
   },
+
   link: {
     fontSize: 14,
     color: COLORS.primary,

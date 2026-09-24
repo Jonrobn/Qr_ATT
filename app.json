@@ -20,7 +20,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.cantorne.QRATT"
+      "package": "com.robinrobin.QRATT"
     },
     "web": {
       "output": "static",
