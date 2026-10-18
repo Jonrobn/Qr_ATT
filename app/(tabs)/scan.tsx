@@ -1,0 +1,196 @@
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+
+import AppButton from '@/components/AppButton';
+import { COLORS } from '@/constants/colors';
+import { useAuth } from '@/lib/auth';
+import { registerAttendance } from '@/lib/attendance';
+import { parseQRPayload } from '@/lib/qr';
+
+function formatScanDateTime(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+}
+
+function formatScanData(data: string) {
+  const result = parseQRPayload(data);
+  if (!result.ok) return data;
+
+  const payload = result.payload;
+  const details = [
+    `Event: ${payload.title ?? payload.event}`,
+    `Code: ${payload.event}`,
+  ];
+
+  if (payload.start) {
+    details.push(`Starts: ${formatScanDateTime(payload.start)}`);
+  }
+  if (payload.end) {
+    details.push(`Ends: ${formatScanDateTime(payload.end)}`);
+  }
+
+  return details.join('\n');
+}
+
+export default function ScanScreen() {
+  const { user } = useAuth();
+  const [permission, requestPermission] = useCameraPermissions();
+  const [scanned, setScanned] = useState(false);
+  const [lastData, setLastData] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  if (!permission) {
+    return <View style={styles.container} />;
+  }
+
+  if (!permission.granted) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Camera Permission Needed</Text>
+        <Text style={styles.subtitle}>
+          We need access to your camera to scan QR codes.
+        </Text>
+        <AppButton
+          theme="primary"
+          title="Grant Permission"
+          icon="camera"
+          onPress={requestPermission}
+        />
+      </View>
+    );
+  }
+
+  const handleBarcodeScanned = ({ data }: { data: string }) => {
+    setScanned(true);
+    setLastData(data);
+    const studentId = user?.id ?? 'unknown';
+    registerAttendance(data, studentId).then((result) => {
+      setMessage(result.message);
+      setSuccess(result.success);
+    });
+  };
+
+  const handleScanAgain = () => {
+    setScanned(false);
+    setLastData(null);
+    setMessage(null);
+  };
+
+  return (
+    <View style={styles.container}>
+      <CameraView
+        style={styles.camera}
+        facing="back"
+        barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+        onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
+      />
+
+      <View style={styles.overlay}>
+        <Text style={styles.overlayText}>
+          {scanned ? 'QR Code detected!' : 'Point your camera at a QR code'}
+        </Text>
+
+        {scanned && message && (
+          <Text
+            style={[styles.scanResult, success ? styles.success : styles.error]}
+          >
+            {message}
+          </Text>
+        )}
+
+        {scanned && lastData && (
+          <Text style={styles.scanData}>{formatScanData(lastData)}</Text>
+        )}
+
+        {scanned && (
+          <AppButton
+            theme="primary"
+            title="Scan Again"
+            icon="refresh"
+            onPress={handleScanAgain}
+          />
+        )}
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#37352F',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+  },
+  camera: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: COLORS.textPrimary,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  overlay: {
+    position: 'absolute',
+    left: 20,
+    right: 20,
+    bottom: 42,
+    backgroundColor: COLORS.card,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    padding: 18,
+    alignItems: 'center',
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.22,
+    shadowRadius: 0,
+    elevation: 5,
+  },
+  overlayText: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: COLORS.textPrimary,
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  scanResult: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: 8,
+    fontWeight: '700',
+  },
+  success: {
+    color: COLORS.success,
+  },
+  error: {
+    color: COLORS.danger,
+  },
+  scanData: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+    lineHeight: 18,
+    marginBottom: 12,
+  },
+});
