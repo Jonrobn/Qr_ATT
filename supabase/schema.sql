@@ -139,6 +139,7 @@ create policy "Students can view their own attendance"
   using (auth.uid() = student_id);
 
 drop policy if exists "Students can insert their own attendance" on public.attendance;
+drop policy if exists "Students can record attendance for active events" on public.attendance;
 create policy "Students can insert their own attendance"
   on public.attendance for insert
   with check (auth.uid() = student_id);

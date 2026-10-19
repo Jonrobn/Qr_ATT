@@ -7,6 +7,8 @@ export type AttendanceRecord = {
   eventId: string;
   eventTitle: string;
   scannedAt: string;
+  startTime: string | null;
+  endTime: string | null;
 };
 
 export type RegisterResult = {
@@ -108,7 +110,7 @@ export async function getAttendanceHistory(
 ): Promise<AttendanceRecord[]> {
   const { data, error } = await supabase
     .from('attendance')
-    .select('id, scanned_at, events ( event_code, title )')
+    .select('id, scanned_at, events ( event_code, title, start_time, end_time )')
     .eq('student_id', studentId)
     .order('scanned_at', { ascending: false });
 
@@ -121,6 +123,8 @@ export async function getAttendanceHistory(
     eventId: row.events?.event_code ?? '',
     eventTitle: row.events?.title ?? '',
     scannedAt: row.scanned_at,
+    startTime: row.events?.start_time ?? null,
+    endTime: row.events?.end_time ?? null,
   }));
 }
 

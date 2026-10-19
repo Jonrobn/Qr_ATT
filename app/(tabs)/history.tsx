@@ -1,5 +1,5 @@
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { COLORS } from '@/constants/colors';
@@ -21,12 +21,62 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleString();
 }
 
+function getEventStatus(
+  startTime: string | null,
+  endTime: string | null,
+  currentTime: number
+): 'Ongoing' | 'Ended' | 'Upcoming' | null {
+  if (!startTime && !endTime) return null;
+
+  const start = startTime ? new Date(startTime).getTime() : null;
+  const end = endTime ? new Date(endTime).getTime() : null;
+
+  if (end !== null && currentTime >= end) return 'Ended';
+  if (start !== null && currentTime < start) return 'Upcoming';
+  return 'Ongoing';
+}
+
+function EventStatusBadge({
+  startTime,
+  endTime,
+  currentTime,
+}: {
+  startTime: string | null;
+  endTime: string | null;
+  currentTime: number;
+}) {
+  const status = getEventStatus(startTime, endTime, currentTime);
+  if (!status) return null;
+
+  const badgeStyle =
+    status === 'Ended'
+      ? styles.endedBadge
+      : status === 'Upcoming'
+        ? styles.upcomingBadge
+        : styles.ongoingBadge;
+
+  return (
+    <View style={[styles.statusBadge, badgeStyle]}>
+      <Text style={styles.statusText}>{status}</Text>
+    </View>
+  );
+}
+
 export default function HistoryScreen() {
   const { user } = useAuth();
   const [role, setRole] = useState<Role | null>(null);
   const [studentRecords, setStudentRecords] = useState<AttendanceRecord[]>([]);
   const [teacherEvents, setTeacherEvents] = useState<TeacherEventAttendance[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentTime, setCurrentTime] = useState(() => Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 30 * 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const load = useCallback(async () => {
     if (!user) {
@@ -89,6 +139,11 @@ export default function HistoryScreen() {
                   </View>
                 </View>
                 <Text style={styles.eventMeta}>{item.eventCode}</Text>
+                <EventStatusBadge
+                  startTime={item.startTime}
+                  endTime={item.endTime}
+                  currentTime={currentTime}
+                />
                 {item.startTime && (
                   <Text style={styles.eventMeta}>Start Time: {formatDate(item.startTime)}</Text>
                 )}
@@ -134,6 +189,16 @@ export default function HistoryScreen() {
             <View style={styles.card}>
               <Text style={styles.eventTitle}>{item.eventTitle}</Text>
               <Text style={styles.eventMeta}>{item.eventId}</Text>
+              <EventStatusBadge
+                startTime={item.startTime}
+                endTime={item.endTime}
+                currentTime={currentTime}
+              />
+              {item.endTime && (
+                <Text style={styles.eventMeta}>
+                  End Time: {formatDate(item.endTime)}
+                </Text>
+              )}
               <Text style={styles.eventMeta}>{formatDate(item.scannedAt)}</Text>
             </View>
           )}
@@ -197,6 +262,27 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.textSecondary,
     marginTop: 2,
+  },
+  statusBadge: {
+    alignSelf: 'flex-start',
+    borderRadius: 7,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    marginTop: 8,
+  },
+  ongoingBadge: {
+    backgroundColor: COLORS.success,
+  },
+  endedBadge: {
+    backgroundColor: COLORS.danger,
+  },
+  upcomingBadge: {
+    backgroundColor: COLORS.accent,
+  },
+  statusText: {
+    color: COLORS.textOnPrimary,
+    fontSize: 12,
+    fontWeight: '700',
   },
   countBadge: {
     backgroundColor: COLORS.success,

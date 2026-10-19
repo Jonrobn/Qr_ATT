@@ -52,6 +52,7 @@ export default function TeacherScreen() {
   const [role, setRole] = useState<Role | null>(null);
   const [roleLoading, setRoleLoading] = useState(true);
   const [savedEvents, setSavedEvents] = useState<CloudEvent[]>([]);
+  const [hiddenEventQrs, setHiddenEventQrs] = useState<Record<string, boolean>>({});
   const [currentTime, setCurrentTime] = useState(() => Date.now());
 
   const [title, setTitle] = useState('');
@@ -200,6 +201,11 @@ export default function TeacherScreen() {
       const result = editingEventCode
         ? await updateEvent(editingEventCode, event)
         : await createEvent(event);
+
+      if (result.duplicate) {
+        setMessage('That event code already exists. Please use a different code.');
+        return;
+      }
 
       if (result.error) {
         setMessage('Could not save the event. Please try again.');
@@ -369,15 +375,16 @@ export default function TeacherScreen() {
           <Text style={styles.emptyEvents}>No active saved events.</Text>
         ) : (
           activeEvents.map((event) => (
-            <Pressable
+              <View
               key={event.id}
-              style={({ pressed }) => [
-                styles.savedEventCard,
-                pressed && styles.savedEventCardPressed,
-              ]}
-              onPress={() => handleEditEvent(event)}
+                style={styles.savedEventCard}
             >
-              <View style={styles.savedEventDetails}>
+                <Pressable
+                  style={styles.savedEventDetails}
+                  onPress={() => handleEditEvent(event)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Edit ${event.title}`}
+                >
                 <Text style={styles.savedEventTitle}>{event.title}</Text>
                 <Text style={styles.savedEventMeta}>{event.event_code}</Text>
                 {event.start_time && (
@@ -390,22 +397,50 @@ export default function TeacherScreen() {
                     Ends {formatDateTime(new Date(event.end_time))}
                   </Text>
                 )}
-              </View>
+              </Pressable>
               <View style={styles.savedEventPreview}>
-                <View style={styles.savedEventQr}>
-                  <QRCode
-                    value={buildQRPayload({
-                      eventId: event.event_code,
-                      title: event.title,
-                      start: event.start_time ?? undefined,
-                      end: event.end_time ?? undefined,
-                    })}
-                    size={64}
-                  />
+                {hiddenEventQrs[event.id] !== true && (
+                  <View style={styles.savedEventQr}>
+                    <QRCode
+                      value={buildQRPayload({
+                        eventId: event.event_code,
+                        title: event.title,
+                        start: event.start_time ?? undefined,
+                        end: event.end_time ?? undefined,
+                      })}
+                      size={64}
+                    />
+                  </View>
+                )}
+                <View style={styles.savedEventActions}>
+                  <Pressable
+                    style={styles.savedEventAction}
+                    onPress={() =>
+                      setHiddenEventQrs((current) => ({
+                        ...current,
+                        [event.id]: current[event.id] !== true,
+                      }))
+                    }
+                    accessibilityRole="button"
+                    accessibilityLabel={`${hiddenEventQrs[event.id] === true ? 'Show' : 'Hide'} QR code for ${event.title}`}
+                  >
+                    <Ionicons
+                      name={hiddenEventQrs[event.id] === true ? 'eye-outline' : 'eye-off-outline'}
+                      size={18}
+                      color={COLORS.primary}
+                    />
+                  </Pressable>
+                  <Pressable
+                    style={styles.savedEventAction}
+                    onPress={() => handleEditEvent(event)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Edit ${event.title}`}
+                  >
+                    <Ionicons name="create-outline" size={18} color={COLORS.primary} />
+                  </Pressable>
                 </View>
-                <Ionicons name="create-outline" size={20} color={COLORS.primary} />
               </View>
-            </Pressable>
+            </View>
           ))
         )}
       </View>
@@ -573,15 +608,26 @@ const styles = StyleSheet.create({
     padding: 14,
     marginBottom: 10,
   },
-  savedEventCardPressed: {
-    backgroundColor: COLORS.surface,
-  },
   savedEventDetails: {
     flex: 1,
     marginRight: 12,
   },
   savedEventPreview: {
     alignItems: 'center',
+  },
+  savedEventActions: {
+    flexDirection: 'row',
+  },
+  savedEventAction: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 3,
   },
   savedEventQr: {
     backgroundColor: '#FFFFFF',
